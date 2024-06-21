@@ -1,0 +1,41 @@
+replicas: 1
+
+# admin:
+#   existingSecret: "grafana-pass"
+#   userKey: admin-user
+#   passwordKey: admin-password
+
+adminUser: admin
+adminPassword: admin
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      ## Datasource do prometheus no grafana
+      - name: Prometheus
+        type: prometheus
+        url: http://dev-kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+        access: proxy
+        isDefault: true
+
+      ## Datasource do loki no grafana
+      - name: Loki
+        access: proxy
+        isDefault: false
+        orgId: 1
+        type: loki
+        url: http://dev-loki-gateway.monitoring.svc.cluster.local
+        version: 1
+
+persistence:
+  type: pvc
+  enabled: false
+  storageClassName: default
+  accessModes:
+    - ReadWriteOnce
+  size: 6Gi
+  # annotations: {}
+  finalizers:
+    - kubernetes.io/pvc-protection
+  extraPvcLabels: {}
